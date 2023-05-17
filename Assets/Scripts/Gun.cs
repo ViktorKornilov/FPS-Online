@@ -13,6 +13,12 @@ public class Gun : MonoBehaviour
 
     public UnityEvent onShoot;
 
+    public int maxAmmo = 30;
+    public int ammo;
+
+    public float recoilAngle = 1;
+    public int shotsPerAmmo = 5;
+
     private void Start()
     {
         source = gameObject.AddComponent<AudioSource>();
@@ -23,23 +29,41 @@ public class Gun : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
+            TryShoot();
+        }
+    }
+
+    void TryShoot()
+    {
+        if (ammo <= 0) return;
+        ammo--;
+        onShoot.Invoke();
+        
+        flashEffect.SetActive(true);
+        Invoke("DisableFlashEffect",0.05f);
+        
+        source.pitch = Random.Range(0.8f, 1.2f);
+        source.PlayOneShot(shootSound);
+        
+
+        for (int i = 0; i < shotsPerAmmo; i++)
+        {
             Shoot();
         }
     }
 
+
     void Shoot()
     {
-        onShoot.Invoke();
-        
         var cam = Camera.main;
-        var ray = new Ray(cam.transform.position, cam.transform.forward);
-            
-        flashEffect.SetActive(true);
-        Invoke("DisableFlashEffect",0.05f);
+        var dir = cam.transform.forward;
+
+        var offsetX = Random.Range(-recoilAngle, recoilAngle);
+        var offsetY = Random.Range(-recoilAngle, recoilAngle);
+        dir =  Quaternion.Euler(offsetX, offsetY, 0) * dir;
         
-        // play shoot sound
-        source.pitch = Random.Range(0.8f, 1.2f);
-        source.PlayOneShot(shootSound);
+        var ray = new Ray(cam.transform.position, dir);
+        
             
         if (Physics.Raycast(ray,out var hit,maxDistance))
         {

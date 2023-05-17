@@ -17,9 +17,9 @@ public class Health : MonoBehaviour
     public UnityEvent onDeath;
     
     
-    public void Damage()
+    public void Damage(int amount)
     {
-        hp -= 1;
+        hp -= amount;
         onDamage.Invoke();
         if (hp <= 0) Die();
     }

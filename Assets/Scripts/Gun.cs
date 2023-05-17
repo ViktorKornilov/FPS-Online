@@ -19,6 +19,8 @@ public class Gun : MonoBehaviour
     public float recoilAngle = 1;
     public int shotsPerAmmo = 5;
 
+    public int damage = 10;
+
     private void Start()
     {
         source = gameObject.AddComponent<AudioSource>();
@@ -70,7 +72,7 @@ public class Gun : MonoBehaviour
             var health = hit.transform.GetComponent<Health>();
             if (health)
             {
-                health.Damage();
+                health.Damage(damage);
             }
             
             if(!hit.transform.CompareTag("Enemy")){
